@@ -1,0 +1,61 @@
+// file: prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. Tabel Produk (Stok barang yang tersedia)
+model Product {
+  id          Int         @id @default(autoincrement())
+  name        String
+  price       Decimal     @db.Decimal(10, 2)
+  stock       Int
+  image_url   String?     @default("https://via.placeholder.com/150")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relasi: Satu produk bisa muncul di banyak detail transaksi
+  orderItems  OrderItem[] 
+}
+
+// 2. Tabel Pesanan (Kepala Struk/Header Transaksi)
+model Order {
+  id            Int         @id @default(autoincrement())
+  customerName  String?     @default("Pelanggan Umum")
+  totalAmount   Decimal     @db.Decimal(10, 2)
+  
+  // Informasi Pembayaran
+  paymentMethod String?     // "CASH", "QRIS", "DEBIT"
+  status        OrderStatus @default(PENDING)
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  // Relasi: Satu transaksi memiliki banyak baris item
+  items         OrderItem[] 
+}
+
+// 3. Tabel Detail Pesanan (Isi baris per baris di dalam struk)
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2) // Harga produk SAAT transaksi terjadi
+
+  // Relasi penghubung ke tabel induk
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+// Standarisasi status agar tidak terjadi typo
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
