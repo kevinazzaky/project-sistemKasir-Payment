@@ -73,18 +73,40 @@ export default function POSPage() {
     setIsProcessing(true);
 
     const orderData = {
-      customerName: "Pelanggan VIP",
+      customerName: "Pelanggan",
       totalAmount: totalAmount,
-      paymentMethod: "CASH",
+      paymentMethod: "MIDTRANS", // Ubah jadi Midtrans
       items: cart,
     };
 
     try {
+      // 1. Tembak data ke Backend Node.js
       const result = await checkoutOrder(orderData);
-      alert(`🎉 BERHASIL! ${result.pesan}`);
-      setCart([]);
+
+      // 2. Cek apakah Backend berhasil memberikan Token Midtrans
+      if (result.token) {
+        // Panggil Pop-up Ajaib Midtrans!
+        window.snap.pay(result.token, {
+          onSuccess: function (response) {
+            alert("🎉 YEY! Pembayaran Berhasil!");
+            setCart([]); // Kosongkan keranjang hanya kalau sukses bayar
+          },
+          onPending: function (response) {
+            alert("Menunggu pembayaran QRIS diselesaikan...");
+          },
+          onError: function (response) {
+            alert("Yah, pembayaran gagal!");
+          },
+          onClose: function () {
+            alert("Kamu menutup pop-up sebelum menyelesaikan pembayaran.");
+          },
+        });
+      } else {
+        alert("Transaksi tersimpan, tapi gagal memuat Midtrans.");
+      }
     } catch (error) {
-      alert("❌ Terjadi kesalahan saat menyimpan transaksi.");
+      console.error("Error Checkout:", error);
+      alert("Terjadi kesalahan saat menyimpan transaksi.");
     } finally {
       setIsProcessing(false);
     }
@@ -124,7 +146,7 @@ export default function POSPage() {
       {/* Bagian Kanan: Struk / Keranjang */}
       <div className="flex-1 bg-[#0f0f0f] p-8 flex flex-col border-l border-[#222] shadow-2xl">
         <h2 className="text-2xl font-bold border-b border-[#333] pb-4 mb-6 text-white uppercase tracking-wider">
-          Pesanan <span className="text-[#D4AF37]">VIP</span>
+          Pesanan <span className="text-[#D4AF37]"></span>
         </h2>
 
         <div className="flex-grow overflow-y-auto pr-2 custom-scrollbar">

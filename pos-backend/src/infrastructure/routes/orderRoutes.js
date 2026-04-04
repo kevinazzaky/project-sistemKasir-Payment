@@ -9,6 +9,10 @@ console.log(
   orderController ? "✅ Terkoneksi" : "❌ Kosong",
 );
 
+// Pintu 1: Kasir minta token untuk Pop-up
 router.post("/checkout", orderController.checkout.bind(orderController));
+
+// Pintu 2: Midtrans melapor pembayaran lunas (BARU!)
+router.post("/webhook", orderController.webhook.bind(orderController));
 
 module.exports = router;
