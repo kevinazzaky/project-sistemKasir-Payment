@@ -7,7 +7,7 @@ class CreateOrder {
     // Logika Bisnis: Menyimpan ke Database MySQL
     return await prisma.order.create({
       data: {
-        customerName: orderData.customerName || "Pelanggan VIP",
+        customerName: orderData.customerName || "Pelanggan",
         totalAmount: orderData.totalAmount,
         paymentMethod: orderData.paymentMethod || "CASH",
         status: "PAID",

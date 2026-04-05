@@ -53,6 +53,14 @@ model OrderItem {
   product   Product  @relation(fields: [productId], references: [id])
 }
 
+model User {
+  id       Int      @id @default(autoincrement())
+  username String   @unique
+  password String   // Nanti password ini akan kita enkripsi (acak)
+  role     String   // Isinya nanti hanya "ADMIN" atau "KASIR"
+}
+
+
 // Standarisasi status agar tidak terjadi typo
 enum OrderStatus {
   PENDING

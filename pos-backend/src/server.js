@@ -10,14 +10,30 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Kita panggil routes-nya di sini
-// Pastikan folder & file ini benar-benar ada di dalam src/infrastructure/routes/
+// --- JALUR ORDER ---
 try {
   const orderRoutes = require("./infrastructure/routes/orderRoutes");
   app.use("/api/orders", orderRoutes);
   console.log("✅ Jalur OrderRoutes berhasil dimuat!");
 } catch (err) {
   console.error("❌ Gagal memuat OrderRoutes. Pesan Error:", err.message);
+}
+
+// --- JALUR AUTH (LOGIN) BARU ---
+try {
+  const authRoutes = require("./infrastructure/routes/authRoutes");
+  app.use("/api/auth", authRoutes);
+  console.log("✅ Jalur AuthRoutes (Login) berhasil dimuat!");
+} catch (err) {
+  console.error("❌ Gagal memuat AuthRoutes. Pesan Error:", err.message);
+}
+
+try {
+  const dashboardRoutes = require("./infrastructure/routes/dashboardRoutes");
+  app.use("/api/dashboard", dashboardRoutes);
+  console.log("✅ Jalur DashboardRoutes berhasil dimuat!");
+} catch (err) {
+  console.error("❌ Gagal memuat DashboardRoutes. Pesan Error:", err.message);
 }
 
 app.listen(port, () => {
