@@ -1,11 +1,15 @@
 // File: src/presentation/pages/POSPage.jsx
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { checkoutOrder } from "../../services/OrderService";
 
 export default function POSPage() {
   const [cart, setCart] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // --- [BARU] Wadah untuk menu dari database ---
+  const [menuItems, setMenuItems] = useState([]);
+  const [isLoadingMenu, setIsLoadingMenu] = useState(true);
 
   // --- SATPAM PENJAGA PINTU ---
   const navigate = useNavigate();
@@ -17,7 +21,23 @@ export default function POSPage() {
       navigate("/login");
     }
   }, [navigate]);
-  // -----------------------------
+
+  // --- [BARU] FUNGSI MENYEDOT MENU DARI DATABASE ---
+  useEffect(() => {
+    const fetchMenuFromDatabase = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/products");
+        const data = await response.json();
+        setMenuItems(data); // Masukkan data asli ke wadah
+        setIsLoadingMenu(false);
+      } catch (error) {
+        console.error("Gagal mengambil menu:", error);
+        setIsLoadingMenu(false);
+      }
+    };
+
+    fetchMenuFromDatabase();
+  }, []);
 
   // --- FUNGSI LOGOUT ---
   const handleLogout = () => {
@@ -25,62 +45,8 @@ export default function POSPage() {
     localStorage.removeItem("user");
     navigate("/login");
   };
-  // ---------------------
 
-  // DAFTAR 50 MENU EKSKLUSIF
-  const products = [
-    { id: 1, name: "Kopi Gula Aren", price: 18000, icon: "☕" },
-    { id: 2, name: "Iced Americano", price: 22000, icon: "🧊" },
-    { id: 3, name: "Matcha Latte", price: 28000, icon: "🍵" },
-    { id: 4, name: "Es Teh Manis", price: 8000, icon: "🍹" },
-    { id: 5, name: "Lemon Tea Squash", price: 18000, icon: "🍋" },
-    { id: 6, name: "Caramel Macchiato", price: 35000, icon: "🍮" },
-    { id: 7, name: "Vanilla Latte", price: 32000, icon: "🍦" },
-    { id: 8, name: "Affogato Gold", price: 25000, icon: "🍨" },
-    { id: 9, name: "Chocolate Lava Shake", price: 30000, icon: "🍫" },
-    { id: 10, name: "Strawberry Mojito", price: 28000, icon: "🍓" },
-    { id: 11, name: "Mie Goreng Spesial", price: 25000, icon: "🍜" },
-    { id: 12, name: "Burger Premium", price: 35000, icon: "🍔" },
-    { id: 13, name: "Nasi Goreng Seafood", price: 45000, icon: "🦐" },
-    { id: 14, name: "Spaghetti Carbonara", price: 55000, icon: "🍝" },
-    { id: 15, name: "Steak Wagyu A5", price: 185000, icon: "🥩" },
-    { id: 16, name: "Pizza Margherita", price: 75000, icon: "🍕" },
-    { id: 17, name: "Ayam Bakar Madu", price: 38000, icon: "🍗" },
-    { id: 18, name: "Salmon Teriyaki", price: 95000, icon: "🐟" },
-    { id: 19, name: "Soto Betawi Premium", price: 42000, icon: "🥣" },
-    { id: 20, name: "Ramen Shoyu", price: 48000, icon: "🍜" },
-    { id: 21, name: "Dory Steak", price: 52000, icon: "🐠" },
-    { id: 22, name: "Beef Teriyaki Rice", price: 45000, icon: "🍚" },
-    { id: 23, name: "Chicken Katsu", price: 38000, icon: "🍱" },
-    { id: 24, name: "Club Sandwich", price: 35000, icon: "🥪" },
-    { id: 25, name: "Lasagna", price: 62000, icon: "🥘" },
-    { id: 26, name: "Fettuccine Alfredo", price: 55000, icon: "🍝" },
-    { id: 27, name: "Kwetiau Sapi", price: 42000, icon: "🍜" },
-    { id: 28, name: "Nasi Gila", price: 30000, icon: "🍛" },
-    { id: 29, name: "Tenderloin Steak", price: 145000, icon: "🥩" },
-    { id: 30, name: "Iga Bakar Penyet", price: 85000, icon: "🍖" },
-    { id: 31, name: "Roti Bakar Coklat", price: 15000, icon: "🍞" },
-    { id: 32, name: "Kentang Goreng", price: 12000, icon: "🍟" },
-    { id: 33, name: "Croissant Butter", price: 24000, icon: "🥐" },
-    { id: 34, name: "Salad Sayur Organik", price: 32000, icon: "🥗" },
-    { id: 35, name: "Dimsum Udang", price: 22000, icon: "🥟" },
-    { id: 36, name: "Nachos Cheese", price: 28000, icon: "🌮" },
-    { id: 37, name: "Chicken Wings BBQ", price: 34000, icon: "🍗" },
-    { id: 38, name: "Pisang Bakar Keju", price: 18000, icon: "🍌" },
-    { id: 39, name: "Edamame Salted", price: 15000, icon: "🎋" },
-    { id: 40, name: "Tahu Walik Krispi", price: 12000, icon: "🍢" },
-    { id: 41, name: "Calamari Rings", price: 32000, icon: "🦑" },
-    { id: 42, name: "Onion Rings", price: 20000, icon: "🧅" },
-    { id: 43, name: "Mac and Cheese", price: 45000, icon: "🧀" },
-    { id: 44, name: "Pancake Maple", price: 28000, icon: "🥞" },
-    { id: 45, name: "Waffle Ice Cream", price: 30000, icon: "🧇" },
-    { id: 46, name: "Smoothie Bowl", price: 35000, icon: "🥣" },
-    { id: 47, name: "Blueberry Cheesecake", price: 42000, icon: "🍰" },
-    { id: 48, name: "Tiramisu", price: 38000, icon: "🍮" },
-    { id: 49, name: "Iced Lychee Tea", price: 22000, icon: "🍹" },
-    { id: 50, name: "Hot Chocolate", price: 25000, icon: "☕" },
-  ];
-
+  // --- FUNGSI KERANJANG BELANJA ---
   const addToCart = (product) => {
     const existingItem = cart.find((item) => item.productId === product.id);
     if (existingItem) {
@@ -97,7 +63,7 @@ export default function POSPage() {
         {
           productId: product.id,
           name: product.name,
-          price: product.price,
+          price: parseInt(product.price), // Pastikan harga berupa angka
           quantity: 1,
         },
       ]);
@@ -124,6 +90,7 @@ export default function POSPage() {
     0,
   );
 
+  // --- FUNGSI CHECKOUT MIDTRANS ---
   const handleCheckout = async () => {
     if (cart.length === 0) return alert("Keranjang masih kosong!");
     setIsProcessing(true);
@@ -181,27 +148,42 @@ export default function POSPage() {
           </button>
         </div>
 
-        {/* Grid menggunakan responsivitas yang baik agar 50 menu tersusun rapi */}
+        {/* --- [BARU] RENDER MENU DARI DATABASE --- */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((p) => (
-            <div
-              key={p.id}
-              onClick={() => addToCart(p)}
-              className="bg-[#141414] rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 border border-[#2a2a2a] hover:-translate-y-2 hover:shadow-[0_8px_30px_rgba(212,175,55,0.15)] hover:border-[#D4AF37] active:scale-95 flex flex-col justify-between"
-            >
-              <div>
-                <div className="text-5xl mb-4 grayscale hover:grayscale-0 transition-all">
-                  {p.icon}
-                </div>
-                <div className="text-sm font-semibold mb-3 text-white tracking-wide leading-snug">
-                  {p.name}
-                </div>
-              </div>
-              <div className="text-[#D4AF37] font-bold text-xs bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-3 py-1.5 rounded-full inline-block mx-auto">
-                Rp {p.price.toLocaleString("id-ID")}
-              </div>
+          {isLoadingMenu ? (
+            <div className="col-span-full text-center text-[#D4AF37] p-10 animate-pulse">
+              Menyiapkan Hidangan Spesial...
             </div>
-          ))}
+          ) : menuItems.length === 0 ? (
+            <div className="col-span-full text-center text-gray-500 p-10">
+              Belum ada menu di database. Silakan tambah lewat Admin!
+            </div>
+          ) : (
+            menuItems.map((p) => (
+              <div
+                key={p.id}
+                onClick={() => addToCart(p)}
+                className="bg-[#141414] rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 border border-[#2a2a2a] hover:-translate-y-2 hover:shadow-[0_8px_30px_rgba(212,175,55,0.15)] hover:border-[#D4AF37] active:scale-95 flex flex-col justify-between"
+              >
+                <div>
+                  {/* Gunakan image_url dari database */}
+                  <div className="text-5xl mb-4 grayscale hover:grayscale-0 transition-all">
+                    {p.image_url}
+                  </div>
+                  <div className="text-sm font-semibold mb-3 text-white tracking-wide leading-snug">
+                    {p.name}
+                  </div>
+                  <div className="text-xs text-gray-500 mb-2">
+                    Stok: {p.stock}
+                  </div>
+                </div>
+                {/* Gunakan parseInt agar harga jadi angka yang rapi */}
+                <div className="text-[#D4AF37] font-bold text-xs bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-3 py-1.5 rounded-full inline-block mx-auto">
+                  Rp {parseInt(p.price).toLocaleString("id-ID")}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 

@@ -17,7 +17,7 @@ class GetDashboardMetrics {
     const totalPesanan = pesananLunas.length;
 
     const riwayatTerbaru = await prisma.order.findMany({
-      take: 5,
+      take: 10,
       orderBy: { createdAt: "desc" },
     });
 

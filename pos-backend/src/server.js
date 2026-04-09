@@ -2,6 +2,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const productRoutes = require('./infrastructure/routes/productRoutes.js');
 require("dotenv").config();
 
 const app = express();
@@ -27,6 +28,10 @@ try {
 } catch (err) {
   console.error("❌ Gagal memuat AuthRoutes. Pesan Error:", err.message);
 }
+
+
+app.use('/api/products', productRoutes);
+console.log("✅ Jalur ProductRoutes berhasil dimuat!");
 
 try {
   const dashboardRoutes = require("./infrastructure/routes/dashboardRoutes");

@@ -1,6 +1,6 @@
-// File: src/presentation/pages/AdminPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ProductManagement from "../components/ProductManagement";
 
 export default function AdminPage() {
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-gray-200 font-sans selection:bg-[#D4AF37] selection:text-black">
+    <div className="min-h-screen bg-[#0a0a0a] text-gray-200 font-sans selection:bg-[#D4AF37] selection:text-black pb-20">
       {/* Navbar Atas */}
       <nav className="bg-[#0f0f0f] border-b border-[#222] px-8 py-5 flex justify-between items-center shadow-2xl">
         <h1 className="text-2xl font-bold text-white tracking-wider uppercase">
@@ -160,7 +160,7 @@ export default function AdminPage() {
                         {new Date(order.createdAt).toLocaleString("id-ID")}
                       </td>
                       <td className="p-4 font-bold text-[#D4AF37]">
-                        Rp {order.totalAmount.toLocaleString("id-ID")}
+                        Rp {parseInt(order.totalAmount).toLocaleString("id-ID")}
                       </td>
                       <td className="p-4">
                         <span
@@ -182,6 +182,11 @@ export default function AdminPage() {
             )}
           </div>
         </div>
+
+        {/* ======================================================= */}
+        {/* PABRIK CRUD MANAJEMEN PRODUK DISISIPKAN DI SINI */}
+        {/* ======================================================= */}
+        <ProductManagement />
       </main>
     </div>
   );
